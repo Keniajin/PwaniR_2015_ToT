@@ -1,0 +1,34 @@
+\frametitle{Search and Replace}
+\begin{Schunk}
+\begin{Sinput}
+> x <- "Lorem Ipsum is simply dummy text of the
++ printing and typesetting industry. This is for the dummy text"
+> grep("the", x)
+\end{Sinput}
+\begin{Soutput}
+[1] 1
+\end{Soutput}
+\begin{Sinput}
+> grep("the",x,value=TRUE)
+\end{Sinput}
+\begin{Soutput}
+[1] "Lorem Ipsum is simply dummy text of the \nprinting and typesetting industry. This is for the dummy text"
+\end{Soutput}
+\begin{Sinput}
+> #first replacement
+> x2 <- sub( "the" , "THE",x)
+> x2
+\end{Sinput}
+\begin{Soutput}
+[1] "Lorem Ipsum is simply dummy text of THE \nprinting and typesetting industry. This is for the dummy text"
+\end{Soutput}
+\begin{Sinput}
+> #All replacement
+> x3 <- gsub( "the" , "THE",x)
+> x3
+\end{Sinput}
+\begin{Soutput}
+[1] "Lorem Ipsum is simply dummy text of THE \nprinting and typesetting industry. This is for THE dummy text"
+\end{Soutput}
+\end{Schunk}
+
