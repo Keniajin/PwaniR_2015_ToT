@@ -235,5 +235,16 @@ abline(c(0,1))
 
 \href{http://www.jstor.org/discover/10.2307/2683253?uid=3738336&uid=2&uid=4&sid=21103314330371}{  How to display data badly}
 
+<< echo=FALSE ,include=FALSE>>=
+# Clean up /git_repositories/Rep-Res-Book/Source/Parent/
+#ParentDirectory <- getwd()
+ #DeleteFiles <- setdiff(list.files(ParentDirectory), c("*.Rnw", "*.pdf","*.csv", "*.png", "day1_introduction_r.Rmd"))
+ #
+#unlink( DeleteFiles)
+x <- c("day1_graphs_presentation-002.pdf","day1_graphs_presentation-003.pdf", "day1_graphs_presentation-004.pdf", "day1_graphs_presentation-005.pdf","day1_graphs_presentation-006.pdf","day1_graphs_presentation-007.pdf",        
+ "day1_graphs_presentation-008.pdf" ,"day1_graphs_presentation-concordance.tex" ,"day1_graphs_presentation.log" , "day1_graphs_presentation.nav", "day1_graphs_presentation.snm","day1_graphs_presentation.synctex.gz",   
+ "day1_graphs_presentation.tex" ,"day1_graphs_presentation.toc", "day1_graphs_presentation.vrb")
+unlink(x)
+@
 \end{frame}
 \end{document}

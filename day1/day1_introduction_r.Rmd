@@ -166,14 +166,11 @@ class(df)
 - Base R functions *read.table* and *read.csv* can read in data stored as text files, delimited by *almost anything* 
 - Data from other stat packages can be read using  *foreign package?*  \newline
   *read.xlsx(file, sheetIndex=1) #excel files* \newline
-  *read.dta(file)# stata files*
+  *read.dta(file)# stata files*   *read.spss(file)# spss files* *read.ssd(file)# sas files*
 
 ## .RDA Data 
- - R Data type
- - Can be created from other data sets 
-    -data <- load("profit.rda") 
-    -Saving a data frame as an rda
-   - Save(data.frame, “dataset.rda”) 
+ - R Data type - save everything in the environment
+ - Can be useful if you want to share the environment you are currently working on
    
 
 ## Reading Dataset

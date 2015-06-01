@@ -14,7 +14,8 @@ fontsize: 11pt
 - An implementation of the __Grammar of Graphics__ by Leland Wilkinson
 - Grammar of graphics represents and abstraction of graphics ideas/objects
 - Think “verb”, “noun”, “adjective” for graphics
-- Allows for a “theory” of graphics on which to build new graphics and graphics objects
+- A flexible way of doing graphics in R
+
 
 
 ## Basic Components of a ggplot2 Plot
@@ -87,7 +88,7 @@ boxplot(maltreat$weight)
   
 ```{r}
 library(ggplot2)
-g <- ggplot(data = maltreat , aes(weight))
+g <- ggplot(data = maltreat , aes(x=weight , y=weight))
 ```
 
 * * *
@@ -95,8 +96,7 @@ g <- ggplot(data = maltreat , aes(weight))
  
 ```{r}
 library(ggplot2)
-ggplot(data = maltreat , aes(x=weight , y=weight)) +
-  geom_boxplot()
+g +  geom_boxplot()
 ```
 
 
@@ -110,21 +110,18 @@ boxplot(maltreat$weight~maltreat$sex,col="grey")
 * * *
 - This is it
 
-
-})
 ```{r}
 library(ggplot2)
-ggplot(data = maltreat , aes(x=sex , y=weight)) + 
-  geom_boxplot(fill = "red")
+g2 <- ggplot(data = maltreat , aes(x=sex , y=weight)) 
+g2 + geom_boxplot(fill = "red")
 ```
 
 * * *
  
 ```{r}
 library(ggplot2)
-ggplot(data = maltreat , aes(x=sex ,
-                    y=weight ,fill=paying)) + 
-  geom_boxplot()
+g3 <- ggplot(data = maltreat , aes(x=sex ,y=weight ,fill=paying))  
+g3 + geom_boxplot()
 ```
 
 ## Histogram of weight 
@@ -140,9 +137,19 @@ hist(maltreat$weight, col="grey")
  
 ```{r}
 library(ggplot2)
-ggplot(data = maltreat , aes(weight)) + geom_histogram()
+g <- ggplot(data = maltreat , aes(weight)) 
+
+g + geom_histogram()
+
 ```
 
+
+* * *
+We can add to our g
+
+```{r}
+g + geom_dotplot(dotsize = 0.2)
+```
 
 ## Scatter of weight  vs heartrate
 ```{r}
@@ -184,7 +191,7 @@ ggplot(data = maltreat , aes(sex)) + geom_bar(fill='grey') +
 
 - draw a boxplot of resprate by gender 
 - filled by paying
-- has a titlle
+- has a title
 - has an xlabel
 - has a y label
 - saved in png
@@ -205,14 +212,14 @@ ggplot(data = maltreat , aes(x=sex , y=resprate ,fill=paying)) +
 ```
 
 * * *
-```{r, warning=FALSE,echo=T , size="tiny",echo=FALSE}
+```{r, warning=FALSE,echo=T , size="tiny",echo=T}
 library(ggplot2)
 maltreat$paying<- factor(maltreat$paying,
 levels = c("","Yes"),
 labels = c("No", "Yes")) 
-ggplot(data = maltreat , aes(x=sex , y=resprate ,fill=paying)) +
-  geom_boxplot(position=position_dodge(.8)) + 
-  ggtitle("A box blot of Resprate by gender") +
-  xlab("Gender") + ylab("Resprate") +
-  theme_bw() 
+g4 <- ggplot(data = maltreat , aes(x=sex , y=resprate ,fill=paying)) 
+
+g4 <- g4 +  geom_boxplot(position=position_dodge(.8)) 
+g4 + ggtitle("A box blot of Resprate by gender") +  
+    xlab("Gender") + ylab("Resprate") +  theme_bw() 
 ```
