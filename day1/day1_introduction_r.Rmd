@@ -33,10 +33,10 @@ framework   : io2012
  - Download  R from - The Comprehensive R Archive Network -http://cran.r-project.org/ and R Studio 
   - Available for the key OS \newline
   
- **R-studio?**
+ **RStudio?**
  -RStudio is the premier integrated development environment for R. - Download and install from http://www.rstudio.com/
 
-**Why R-studio?**
+**Why RStudio?**
  - RStudio's source editor includes a variety of productivity enhancing features including syntax highlighting, code completion, multiple-file editing, and find/replace, retrieving prev commands
  
  

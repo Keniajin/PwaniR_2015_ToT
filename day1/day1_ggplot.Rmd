@@ -1,5 +1,4 @@
 ---
-title: "Graphs with ggplot"
 author: "Ken Mwai and Greg Fegan"
 output:
   beamer_presentation:
@@ -97,6 +96,7 @@ g <- ggplot(data = maltreat , aes(x=weight , y=weight))
 ```{r}
 library(ggplot2)
 g +  geom_boxplot()
+g+geom_point()
 ```
 
 

@@ -1,0 +1,169 @@
+---
+title: "Regression Modelling"
+output: html_document
+---
+
+
+Is an automatic or manual transmission better for MPG?
+-------------------------------------------------------
+
+Synopsis
+------------
+In this report we aim to show whether manual or automatic transmission is better for mile per gallon consumed (MPG).  We also intend to quantify the MPG difference between automatic and manual transmissions. A linear regression model with MPG as the outcome is fitted with transmission , weight and horse power used as response variables. We have predicted that the weight of the car was a significant confounder in our analysis, and the choice of manual or automatic depends on it. We conclude that the cars with a automatic transmission are better for mpg than cars with an automatic transmission. 
+
+Data
+------
+This assignment makes use of the dataset Motor Trend Car Road Tests (mtcars) data.The data was extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973\-74) models.
+
+Loading and Summary of the Data
+---------------------------------
+
+```{r setoptions, echo=FALSE}
+library('knitr')
+opts_chunk$set(echo=F, results="show")
+```
+
+```{r packages,warning=F,include=FALSE}
+library(ggplot2)
+library(plyr)
+library(dplyr)
+library(xtable)
+#load the dataset
+dataCars <- mtcars
+```
+
+
+```{r dataManagement , echo=TRUE ,warning=F,include=FALSE}
+#add labels to the transmission
+dataCars$am <- factor(dataCars$am , levels = c(0,1), labels= c("Automatic", "Manual"))
+dataCars$cyl <- factor(dataCars$cyl) 
+dataCars$vs <- factor(dataCars$vs)
+dataCars$gear <- factor(dataCars$gear)
+dataCars$carb <- factor(dataCars$carb)
+
+#mean of mpg by transmission
+mpg_summary <- ddply(dataCars, c("am"), summarise,
+                     count    = sum(!is.na(mpg)),
+                     mean = mean(mpg, na.rm=TRUE),
+                     sd   = sd(mpg, na.rm=TRUE))
+```
+
+
+The data has `r mpg_summary[1,2]` automatic cars with an average MPG of `r round(mpg_summary[1,3],2)` compared to the mean MPG of manual cars of `r round(mpg_summary[2,3],2)`. Table 1.0 shows the summary of the MPG for each transmission with the standard deviation. 
+
+```{r boxplot1 , echo=FALSE ,warning=F,include=FALSE}
+#do a box plot of the data
+plot1 <-   ggplot(dataCars, aes(x=am, y=mpg)) + geom_boxplot(aes(x=am, y=mpg,fill =factor(cyl))) + 
+  labs(title="MPG vs transmission by number of cylinders",y="MPG", x="Transmission") +
+  guides(fill=guide_legend(title="Cylinders")) + theme_bw()
+ggsave(plot1, file="plot1.png", width=5.6, height=5.25)
+
+#a scatter plot for the mpg vs weight colored by transmission
+plot2 <- ggplot(dataCars, aes(wt, mpg)) + geom_point(aes(x=wt, y= mpg ,colour=factor(am))) +
+  labs(title="MPG vs weight by transmission",y="MPG", x=" Weight (lb/1000)") +
+  guides(colour=guide_legend(title="Transmission")) + theme_bw()
+ggsave(plot2, file="plot2.png", width=5.6, height=5.25)
+
+```
+
+Plot 1 in the appendix section shows that motor vehicles with high number of cylinders have a lower mean MPG consumption for both transmissions. Plot shows weight as a confounder of the data since, manual cars have lower weight but a higher MPG compared to automic cars with high weight but lower MPG consumption. 
+
+
+Regression Model
+=======================
+
+Model Overview
+-----------------
+
+```{r model1 , echo=FALSE ,warning=F,include=FALSE}
+fit <- lm(mpg~am, data = dataCars)
+summary(fit)
+```
+
+
+Only analyzing the transmission factor, we could conclude that an automatic car is better than a manual one as model1 summary in the appendix shows. However, there could be more factors that influenced in the car efficiency and act as a confounder variable in the results obtained. To get a preview which variables could have more influence in the outcome of our regression model, we then build a model with all the variables included and selected the ones who had a significant participation, i.e. a significant p\-value or big residual standard deviation.
+
+Model Selection
+-----------------
+
+```{r model2 , echo=FALSE ,warning=F,include=FALSE}
+model1 <- lm(mpg ~ . ,data= dataCars)
+sModel1 <- summary(model1)
+sModel1$coefficients[5,]
+```
+
+Considering the model with all the variables as predictor variables , we obtained a high R2 statistic of `r round(sModel1$r.squared,2)`, meaning that this model explained 89.31% of the data variance1.We could have selected this model but, it has many linear dependent variables, so this increases the standard error, hence variance, of the coefficients, named variance inflation. 
+
+We used a stepwise selection of the model and used anova to check whether the best fit model has a significance difference from the others. The variables we selected from the model with all the variables are 
+
+  - **hp** with a p\-value of `r sModel1$coefficients[5,4]`
+  - **wt** with a p\-value of  `r sModel1$coefficients[7,4]`
+  - **am**  the outcome of interest
+  - **wt:am** and **hp:am**  
+
+To validate the model we did a plot of the standardized residuals and the its normal qq plot ( plot3 in the appendix). This shows tha our residuals are normally distributed. 
+
+Discussion
+---------------
+
+```{r modelselected, echo=TRUE ,warning=T,include=T}
+#include the key variables 
+model2 <- lm(mpg ~ am + wt  + hp + wt:am + hp:am ,data= dataCars)
+sModel2 <-summary(model2)
+sModel2
+```
+
+
+From the model above, we can observe that the main variables are transmission , the interactions between horse power and transmission and weight and transmission. The model has an r\-squared of `r round(sModel2$r.squared,2)` and a p\-value of 4.913e\-10
+
+A manual motor vehicle has a high  MPG `r round(sModel2$coefficients[1,1],2)`. Both weight and horse power have a negative effect on the MPG efficiency. With other effects held constant, a unit increase in weight will reduce the MPG by `r round(sModel2$coefficients[3,1],2)` and the horse power by `r round(sModel2$coefficients[4,1],2)`. 
+
+
+```{r modelselectedB, echo=TRUE ,warning=T,include=T}
+#include the key variables 
+model3 <- lm(mpg ~  wt:factor(am) + hp:factor(am) ,data= dataCars)
+sModel3 <-summary(model3)
+sModel3
+```
+
+Checking on the weight, if we keep the horse power constant, for each unit increase, which is equal to 1000 lbs , the number of miles per galon will decrease `r round(sModel3$coefficients[3,1],2)` for manual cars and `r round(sModel3$coefficients[2,1],2)` for automatic cars. Regarding the horse power, for each additional horse power car , it will make`r round(sModel3$coefficients[5,1],2)` more miles for manual cars and `r round(sModel3$coefficients[4,1],2)` for automatic cars.
+
+Finaly we did an anova to compare the models and shows model1 is better than fit but our last model (model2) has no significant difference. But due to variance inflation we setlled on model2.
+
+```{r compareModel, echo=TRUE ,warning=T,include=T}
+#compare the models
+#using anova
+anova(fit, model1, model2)
+```
+
+\pagebreak
+  
+Appendix
+=================
+
+Table 1
+-------------
+```{r echo=F,results='asis',error=F,warning=F}
+kable(mpg_summary, format = "markdown")
+```
+
+
+Plot1
+-----------
+```{r , echo=F}
+print(plot1)
+```
+
+Plot2
+---------
+```{r , echo=F}
+print(plot2)
+```
+
+Plot3
+-------
+```{r , echo=F }
+model2 <- lm(mpg ~ am + wt  + hp + wt:am + hp:am ,data= dataCars)
+par(mfrow=c(2,2))  
+plot(model2)
+```
